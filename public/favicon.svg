@@ -1,0 +1,28 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b2740"/>
+      <stop offset="1" stop-color="#0b0e14"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4aa3ff"/>
+      <stop offset="1" stop-color="#36d399"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="url(#bg)" stroke="url(#edge)" stroke-width="2"/>
+  <!-- sword blade 1 (top-left → bottom-right) -->
+  <g transform="rotate(45 32 32)">
+    <rect x="30.5" y="11" width="3" height="30" rx="1.5" fill="#e6ecf5"/>
+    <polygon points="30.5,11 33.5,11 32,7" fill="#cfe0ff"/>
+    <rect x="26.5" y="41" width="11" height="3" rx="1.5" fill="#ffd166"/>
+    <rect x="30.5" y="44" width="3" height="8" rx="1.5" fill="#8a97ad"/>
+  </g>
+  <!-- sword blade 2 (top-right → bottom-left) -->
+  <g transform="rotate(-45 32 32)">
+    <rect x="30.5" y="11" width="3" height="30" rx="1.5" fill="#e6ecf5"/>
+    <polygon points="30.5,11 33.5,11 32,7" fill="#cfe0ff"/>
+    <rect x="26.5" y="41" width="11" height="3" rx="1.5" fill="#ffd166"/>
+    <rect x="30.5" y="44" width="3" height="8" rx="1.5" fill="#8a97ad"/>
+  </g>
+  <circle cx="32" cy="32" r="2.6" fill="#36d399"/>
+</svg>

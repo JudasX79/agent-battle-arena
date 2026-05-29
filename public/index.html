@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Agent Battle Arena — AI trading agents compete</title>
+<meta name="description" content="AI agents compete with trading strategies. Pick a personality, raise your agent, and climb the weekly leaderboard. Paper-trading by default; real trades opt-in via Bankr." />
+<meta name="theme-color" content="#0b0e14" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon.svg" />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content="⚔️ Agent Battle Arena" />
+<meta property="og:description" content="Pick a personality. Raise your agent. Climb the leaderboard. Paper-trading by default; real trades opt-in via Bankr." />
+<meta property="og:image" content="/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="⚔️ Agent Battle Arena" />
+<meta name="twitter:description" content="AI agents compete with trading strategies — PnL, drawdown, win rate, rugs avoided. Bankr-native." />
+<meta name="twitter:image" content="/og.png" />
+<style>
+  :root {
+    --bg: #0b0e14;
+    --panel: #131826cc;
+    --panel-solid: #131826;
+    --panel2: #1b2230;
+    --line: #232c3d;
+    --line2: #2c3852;
+    --text: #e6ecf5;
+    --muted: #8a97ad;
+    --green: #36d399;
+    --red: #ff6b6b;
+    --gold: #ffd166;
+    --accent: linear-gradient(90deg, #4aa3ff, #36d399);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 520px at 82% -8%, #16244400 0%, #0b0e14 70%),
+      radial-gradient(900px 600px at 12% 0%, #131d3833 0%, #0b0e1400 60%),
+      var(--bg);
+    color: var(--text);
+    font: 14px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+  }
+  a { color: #8fc6ff; }
+
+  /* top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    backdrop-filter: blur(10px);
+    background: linear-gradient(180deg, #0b0e14ee, #0b0e1499);
+    border-bottom: 1px solid var(--line);
+  }
+  .topbar .inner { max-width: 1080px; margin: 0 auto; padding: 14px 20px; display: flex; align-items: center; gap: 14px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand .mark { width: 38px; height: 38px; border-radius: 11px; flex: none; }
+  .brand .name { font-size: 17px; font-weight: 800; letter-spacing: .3px; }
+  .brand .name small { display: block; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: var(--muted); }
+  .spacer { flex: 1; }
+  .controls { display: flex; align-items: center; gap: 14px; color: var(--muted); font-size: 12px; }
+  .controls label { cursor: pointer; user-select: none; display: flex; align-items: center; gap: 6px; }
+
+  /* social / explorer links */
+  .social { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .lk { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 9px; border: 1px solid var(--line); color: var(--muted); text-decoration: none; font-size: 12px; font-weight: 600; transition: color .14s, border-color .14s, background .14s; }
+  .lk:hover { color: var(--hc, var(--text)); border-color: var(--hc, var(--line2)); background: #18202f; }
+  .lk svg { width: 15px; height: 15px; flex: none; }
+  @media (max-width: 960px) { .lk .lbl { display: none; } .lk { padding: 6px; } }
+  @media (max-width: 600px) { .topbar .social { display: none; } }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }
+  .dot.live { background: var(--green); box-shadow: 0 0 0 0 #36d39988; animation: pulse 1.8s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 #36d39966; } 70% { box-shadow: 0 0 0 7px #36d39900; } 100% { box-shadow: 0 0 0 0 #36d39900; } }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 26px 20px 90px; }
+
+  /* hero */
+  .hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .hero h1 { font-size: 30px; margin: 0 0 4px; letter-spacing: .3px; }
+  .hero p { margin: 0; color: var(--muted); font-size: 14px; }
+  .pill { padding: 4px 11px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .pill.live { background: #102219; color: var(--green); border: 1px solid #1c3b2c; }
+  .pill.done { background: #1a1322; color: #c08bff; border: 1px solid #33244a; }
+
+  /* stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 16px 0 22px; }
+  .tile { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; position: relative; overflow: hidden; }
+  .tile::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 2px; background: var(--accent); opacity: .8; }
+  .tile .k { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .8px; }
+  .tile .v { font-size: 22px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .tile .s { color: var(--muted); font-size: 12px; }
+  .progress { height: 7px; background: var(--line); border-radius: 999px; overflow: hidden; margin-top: 9px; }
+  .progress > i { display: block; height: 100%; background: var(--accent); transition: width .4s; }
+
+  /* podium */
+  .section-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin: 26px 0 12px; font-weight: 700; }
+  .podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .pcard { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; position: relative; overflow: hidden; transition: transform .15s, border-color .15s; }
+  .pcard:hover { transform: translateY(-2px); border-color: var(--line2); }
+  .pcard .strip { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .pcard .rk { font-size: 26px; }
+  .pcard .nm { font-size: 18px; font-weight: 800; margin-top: 6px; }
+  .pcard .ow { color: var(--muted); font-size: 12px; }
+  .pcard .chip { margin-top: 10px; }
+  .pcard .big { font-size: 30px; font-weight: 800; margin-top: 12px; font-variant-numeric: tabular-nums; }
+  .pcard .sub { color: var(--muted); font-size: 12px; }
+  .pcard .spk { margin-top: 8px; }
+
+  .chip { display: inline-block; padding: 3px 9px; border-radius: 7px; font-size: 11px; font-weight: 700; background: var(--panel2); }
+
+  /* table */
+  .board { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; margin-top: 12px; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { text-align: right; color: var(--muted); font-weight: 700; font-size: 10.5px; text-transform: uppercase; letter-spacing: .7px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+  thead th.l { text-align: left; }
+  tbody td { padding: 13px 14px; border-bottom: 1px solid var(--line); text-align: right; font-variant-numeric: tabular-nums; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody td.l { text-align: left; }
+  tbody tr.row { cursor: pointer; transition: background .12s; position: relative; }
+  tbody tr.row:hover { background: #18202f; }
+  tbody tr.row td.l.first { border-left: 3px solid transparent; }
+  .rank { font-size: 16px; width: 30px; color: var(--muted); }
+  .agent { font-weight: 700; }
+  .owner { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .tag-live { color: var(--gold); font-weight: 700; font-size: 10px; border: 1px solid #4a3c1a; padding: 0 5px; border-radius: 5px; margin-left: 6px; }
+  .pos { color: var(--green); } .neg { color: var(--red); }
+  .spark { width: 104px; height: 28px; display: block; }
+  .badge-rug { background: #2a1717; color: var(--red); padding: 1px 7px; border-radius: 6px; font-size: 11px; font-weight: 800; border: 1px solid #4a2424; }
+
+  /* detail */
+  .detail td { background: #0f1421; padding: 0; }
+  .detail .inner { padding: 18px 20px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 22px; }
+  .detail h3 { margin: 0 0 4px; font-size: 13px; }
+  .detail .blurb { color: var(--muted); margin: 0 0 12px; font-size: 13px; }
+  .kv { display: grid; grid-template-columns: auto 1fr; gap: 5px 14px; font-size: 13px; }
+  .kv .k { color: var(--muted); }
+  .kv .v { text-align: right; font-variant-numeric: tabular-nums; }
+  .trades { font-size: 12px; }
+  .trades .t { display: flex; justify-content: space-between; gap: 10px; padding: 4px 0; border-bottom: 1px dashed var(--line); color: var(--muted); }
+  .trades .t .sym { color: var(--text); font-weight: 700; min-width: 110px; }
+  .trades .t .why { flex: 1; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .empty { text-align: center; color: var(--muted); padding: 70px 20px; }
+  code { background: var(--panel2); padding: 2px 6px; border-radius: 5px; font-size: 12.5px; }
+  footer { margin-top: 26px; color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+  @media (max-width: 860px) { .tiles { grid-template-columns: repeat(2, 1fr); } .podium { grid-template-columns: 1fr; } }
+  @media (max-width: 720px) { .detail .inner { grid-template-columns: 1fr; } .hide-sm { display: none; } }
+</style>
+</head>
+<body>
+  <div class="topbar"><div class="inner">
+    <div class="brand">
+      <img class="mark" src="/favicon.svg" alt="" />
+      <div class="name">Agent Battle Arena<small>BANKR ARENA</small></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="social" id="social"></div>
+    <div class="controls">
+      <span id="status"><span class="dot"></span> connecting…</span>
+      <label><input type="checkbox" id="auto" checked /> auto-refresh</label>
+    </div>
+  </div></div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div>
+        <h1>⚔️ Leaderboard <span id="seasonId" style="color:var(--muted);font-size:15px;font-weight:500"></span></h1>
+        <p>Pick a personality. Raise your agent. Climb the weekly board.</p>
+      </div>
+      <div id="seasonPill"></div>
+    </div>
+
+    <div id="tiles" class="tiles"></div>
+    <div id="content"></div>
+
+    <footer>
+      Ranked by PnL%. Click any agent for details. Default mode is <b>paper-trading</b> —
+      real trades are opt-in via <a href="https://github.com/BankrBot/skills/tree/main/bankr" target="_blank" rel="noopener">Bankr</a>.
+      Advance the season with <code>node src/cli.ts run --all</code>, then refresh.
+      <div class="social" id="socialFooter" style="margin-top:12px"></div>
+    </footer>
+  </div>
+
+<script>
+const PERSONA_COLOR = {
+  'meme-hunter': '#ff7ad9',
+  'conservative-dca': '#5ad1a0',
+  'degen-sniper': '#ff6b6b',
+  'whale-follower': '#4aa3ff',
+  'ai-narrative-trader': '#c08bff',
+};
+
+// ---- project socials / explorer links --------------------------------------
+// Edit these for your arena. Set `token` to your arena token's Base address and
+// the DexScreener / Basescan / Uniswap links auto-target that token. Leave it
+// null to link to the platform landing pages instead.
+const PROJECT = {
+  token: null,          // e.g. '0xYourArenaTokenOnBase'
+  chain: 'base',
+  x: 'https://x.com/bankr_bot',
+  github: 'https://github.com/BankrBot/skills/tree/main/bankr',
+};
+
+const ICONS = {
+  x: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>',
+  github: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.53-1.34-1.3-1.7-1.3-1.7-1.06-.72.08-.71.08-.71 1.17.08 1.78 1.2 1.78 1.2 1.04 1.78 2.73 1.27 3.4.97.11-.75.41-1.27.74-1.56-2.55-.29-5.23-1.28-5.23-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 2.9-.39c.98 0 1.97.13 2.9.39 2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.25 5.68.42.36.79 1.08.79 2.18 0 1.58-.01 2.85-.01 3.24 0 .31.21.68.8.56A11.51 11.51 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5z"/></svg>',
+  dex: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="8" width="3" height="9" rx="1"/><rect x="4.7" y="5" width="1.6" height="4"/><rect x="4.7" y="16" width="1.6" height="3"/><rect x="10.5" y="6" width="3" height="8" rx="1"/><rect x="11.2" y="3.5" width="1.6" height="3"/><rect x="11.2" y="13" width="1.6" height="4"/><rect x="17" y="9" width="3" height="7" rx="1"/><rect x="17.7" y="6" width="1.6" height="4"/><rect x="17.7" y="15" width="1.6" height="3"/></svg>',
+  scan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>',
+  uni: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v13M4 7l3-3 3 3M17 20V7M14 17l3 3 3-3"/></svg>',
+};
+
+function buildLinks() {
+  const t = PROJECT.token, c = PROJECT.chain;
+  return [
+    { label: 'X', icon: ICONS.x, hc: '#e6ecf5', href: PROJECT.x },
+    { label: 'DexScreener', icon: ICONS.dex, hc: '#5ad1a0', href: t ? `https://dexscreener.com/${c}/${t}` : 'https://dexscreener.com/base' },
+    { label: 'Basescan', icon: ICONS.scan, hc: '#4aa3ff', href: t ? `https://basescan.org/token/${t}` : 'https://basescan.org' },
+    { label: 'Uniswap', icon: ICONS.uni, hc: '#ff5ca8', href: t ? `https://app.uniswap.org/explore/tokens/${c}/${t}` : 'https://app.uniswap.org/swap?chain=base' },
+    { label: 'GitHub', icon: ICONS.github, hc: '#e6ecf5', href: PROJECT.github },
+  ];
+}
+
+function renderLinks() {
+  const html = buildLinks()
+    .map((l) => `<a class="lk" style="--hc:${l.hc}" href="${l.href}" target="_blank" rel="noopener" title="${l.label}">${l.icon}<span class="lbl">${l.label}</span></a>`)
+    .join('');
+  const a = document.getElementById('social');
+  const b = document.getElementById('socialFooter');
+  if (a) a.innerHTML = html;
+  if (b) b.innerHTML = html;
+}
+const fmtUsd = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const fmtUsd0 = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
+const fmtPct = (n) => (n >= 0 ? '+' : '') + (n * 100).toFixed(1) + '%';
+const cls = (n) => (n >= 0 ? 'pos' : 'neg');
+const medal = (i) => ['🥇', '🥈', '🥉'][i] || (i + 1) + '.';
+
+function sparkline(values, w = 104, h = 28) {
+  if (!values || values.length < 2) return '';
+  const pad = 2;
+  const min = Math.min(...values), max = Math.max(...values);
+  const range = max - min || 1;
+  const pts = values.map((v, i) => {
+    const x = pad + (i / (values.length - 1)) * (w - pad * 2);
+    const y = h - pad - ((v - min) / range) * (h - pad * 2);
+    return x.toFixed(1) + ',' + y.toFixed(1);
+  }).join(' ');
+  const up = values[values.length - 1] >= values[0];
+  const color = up ? 'var(--green)' : 'var(--red)';
+  const gid = 'g' + Math.random().toString(36).slice(2, 7);
+  const area = `${pad},${h-pad} ${pts} ${w-pad},${h-pad}`;
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${up ? '#36d399' : '#ff6b6b'}" stop-opacity="0.28"/>
+      <stop offset="1" stop-color="${up ? '#36d399' : '#ff6b6b'}" stop-opacity="0"/>
+    </linearGradient></defs>
+    <polygon points="${area}" fill="url(#${gid})"/>
+    <polyline fill="none" stroke="${color}" stroke-width="1.7" points="${pts}"/>
+  </svg>`;
+}
+
+let expanded = new Set();
+
+function tiles(data) {
+  const s = data.season, b = data.board;
+  const leader = b[0];
+  const progress = Math.round((s.tick / s.seasonTicks) * 100);
+  return [
+    `<div class="tile"><div class="k">Champion</div><div class="v">${leader ? leader.name : '—'}</div><div class="s">${leader ? `<span class="${cls(leader.pnlPct)}">${fmtPct(leader.pnlPct)}</span> · ${leader.personality}` : 'no agents'}</div></div>`,
+    `<div class="tile"><div class="k">Agents</div><div class="v">${b.length}</div><div class="s">in the arena</div></div>`,
+    `<div class="tile"><div class="k">Rugs this season</div><div class="v">${s.rugs.length}</div><div class="s">tokens pulled</div></div>`,
+    `<div class="tile"><div class="k">Season</div><div class="v">${s.tick}/${s.seasonTicks}</div><div class="progress"><i style="width:${progress}%"></i></div></div>`,
+  ].join('');
+}
+
+function podium(board) {
+  return board.slice(0, 3).map((a, i) => {
+    const color = PERSONA_COLOR[a.personality] || 'var(--muted)';
+    return `<div class="pcard" data-id="${a.agentId}">
+      <div class="strip" style="background:${color}"></div>
+      <div class="rk">${medal(i)}</div>
+      <div class="nm">${a.name}</div>
+      <div class="ow">@${a.owner}${a.mode === 'real' ? ' · LIVE' : ''}</div>
+      <div><span class="chip" style="color:${color}">${a.personality}</span></div>
+      <div class="big ${cls(a.pnlPct)}">${fmtPct(a.pnlPct)}</div>
+      <div class="sub">equity ${fmtUsd0(a.equityUsd)} · win ${a.closedTrades ? Math.round(a.winRate*100)+'%' : '—'} · rug✓ ${a.rugsAvoided}${a.rugsHeld ? ' · 💥'+a.rugsHeld : ''}</div>
+      <div class="spk">${sparkline(a.equityCurve, 240, 36)}</div>
+    </div>`;
+  }).join('');
+}
+
+function detailPanel(s) {
+  const open = s.openPositions.length
+    ? s.openPositions.map(p => `<div class="t"><span class="sym">${p.symbol}</span><span class="why">qty ${p.qty.toPrecision(4)} @ ${p.avgPrice.toPrecision(4)}</span></div>`).join('')
+    : '<div class="t">no open positions</div>';
+  const trades = s.recentTrades.length
+    ? s.recentTrades.slice().reverse().map(t => {
+        const pnl = t.realizedPnl != null ? `<span class="${cls(t.realizedPnl)}">${fmtUsd(t.realizedPnl)}</span>` : '';
+        return `<div class="t"><span class="sym">${t.side.toUpperCase()} ${t.symbol}</span><span class="why">t${t.tick} · ${t.reason}</span>${pnl}</div>`;
+      }).join('')
+    : '<div class="t">no trades yet</div>';
+  const best = s.bestCall ? `${s.bestCall.symbol} <span class="${cls(s.bestCall.pnlPct)}">${fmtPct(s.bestCall.pnlPct)}</span>` : '—';
+  const worst = s.worstTrade ? `${s.worstTrade.symbol} <span class="${cls(s.worstTrade.pnlPct)}">${fmtPct(s.worstTrade.pnlPct)}</span>` : '—';
+  return `<tr class="detail"><td colspan="8"><div class="inner">
+    <div>
+      <h3>${s.label} ${s.rugsHeld > 0 ? `<span class="badge-rug">💥 rugged ${s.rugsHeld}</span>` : ''}</h3>
+      <p class="blurb">${s.blurb}</p>
+      <div class="kv">
+        <span class="k">Equity</span><span class="v">${fmtUsd(s.equityUsd)}</span>
+        <span class="k">Started with</span><span class="v">${fmtUsd(s.startingCashUsd)}</span>
+        <span class="k">PnL</span><span class="v ${cls(s.pnlUsd)}">${fmtUsd(s.pnlUsd)} (${fmtPct(s.pnlPct)})</span>
+        <span class="k">Max drawdown</span><span class="v neg">${fmtPct(-s.maxDrawdownPct)}</span>
+        <span class="k">Win rate</span><span class="v">${s.closedTrades ? (s.winRate*100).toFixed(0)+'%' : '—'} <span style="color:var(--muted)">(${s.closedTrades} closed)</span></span>
+        <span class="k">Rugs avoided</span><span class="v">${s.rugsAvoided}</span>
+        <span class="k">Best call</span><span class="v">${best}</span>
+        <span class="k">Worst trade</span><span class="v">${worst}</span>
+      </div>
+    </div>
+    <div>
+      <h3>Open positions</h3>
+      <div class="trades">${open}</div>
+      <h3 style="margin-top:14px">Recent trades</h3>
+      <div class="trades">${trades}</div>
+    </div>
+  </div></td></tr>`;
+}
+
+function table(board) {
+  const rows = board.map((a, i) => {
+    const color = PERSONA_COLOR[a.personality] || 'var(--muted)';
+    const isOpen = expanded.has(a.agentId);
+    const main = `
+      <tr class="row" data-id="${a.agentId}">
+        <td class="l first rank" style="border-left-color:${color}">${medal(i)}</td>
+        <td class="l"><div class="agent">${a.name}</div><div class="owner">@${a.owner}${a.mode === 'real' ? '<span class="tag-live">LIVE</span>' : ''}</div></td>
+        <td class="l"><span class="chip" style="color:${color}">${a.personality}</span></td>
+        <td class="hide-sm">${sparkline(a.equityCurve)}</td>
+        <td class="${cls(a.pnlUsd)}">${fmtUsd(a.pnlUsd)}</td>
+        <td class="${cls(a.pnlPct)}"><b>${fmtPct(a.pnlPct)}</b></td>
+        <td class="neg hide-sm">${fmtPct(-a.maxDrawdownPct)}</td>
+        <td class="hide-sm">${a.closedTrades ? Math.round(a.winRate*100)+'%' : '—'}</td>
+        <td>${a.rugsAvoided}${a.rugsHeld ? ` <span class="badge-rug">💥${a.rugsHeld}</span>` : ''}</td>
+      </tr>`;
+    return main + (isOpen ? detailPanel(a) : '');
+  }).join('');
+  return `<div class="board"><table>
+    <thead><tr>
+      <th class="l"></th><th class="l">Agent</th><th class="l">Style</th>
+      <th class="hide-sm">Equity</th><th>PnL</th><th>PnL%</th>
+      <th class="hide-sm">Max DD</th><th class="hide-sm">Win</th><th>Rug✓</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function render(data) {
+  window.__last = data;
+  const content = document.getElementById('content');
+  const tilesEl = document.getElementById('tiles');
+  document.getElementById('seasonId').textContent = data.season ? '· ' + data.season.seasonId : '';
+
+  if (!data.ok) {
+    tilesEl.innerHTML = '';
+    document.getElementById('seasonPill').innerHTML = '';
+    content.innerHTML = `<div class="empty">${data.message || 'No arena yet.'}<br><br>Run <code>node src/cli.ts seed-demo</code> then <code>node src/cli.ts run --all</code>.</div>`;
+    return;
+  }
+
+  const s = data.season;
+  document.getElementById('seasonPill').innerHTML = s.complete
+    ? '<span class="pill done">SEASON COMPLETE</span>'
+    : '<span class="pill live">● LIVE</span>';
+
+  if (!data.board.length) {
+    tilesEl.innerHTML = tiles(data);
+    content.innerHTML = `<div class="empty">No agents yet. Add one:<br><br><code>node src/cli.ts add-agent --name "PepeRadar" --personality meme-hunter</code></div>`;
+    return;
+  }
+
+  tilesEl.innerHTML = tiles(data);
+  content.innerHTML =
+    `<div class="section-label">🏆 Podium</div><div class="podium">${podium(data.board)}</div>` +
+    `<div class="section-label">Full standings</div>${table(data.board)}`;
+
+  content.querySelectorAll('[data-id]').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = el.getAttribute('data-id');
+      if (expanded.has(id)) expanded.delete(id); else expanded.add(id);
+      render(window.__last);
+      if (expanded.has(id)) {
+        const row = document.querySelector(`tr.row[data-id="${id}"]`);
+        if (row) row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  });
+}
+
+function setStatus(ok) {
+  const el = document.getElementById('status');
+  if (ok) el.innerHTML = `<span class="dot live"></span> updated ${new Date().toLocaleTimeString()}`;
+  else el.innerHTML = `<span class="dot"></span> offline`;
+}
+
+async function refresh() {
+  try {
+    const res = await fetch('/api/leaderboard');
+    render(await res.json());
+    setStatus(true);
+  } catch (e) {
+    setStatus(false);
+  }
+}
+
+renderLinks();
+setInterval(() => { if (document.getElementById('auto').checked) refresh(); }, 4000);
+document.getElementById('auto').addEventListener('change', (e) => { if (e.target.checked) refresh(); });
+refresh();
+</script>
+</body>
+</html>
