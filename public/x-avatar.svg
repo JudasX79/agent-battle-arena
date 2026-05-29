@@ -1,0 +1,36 @@
+<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="0.5" cy="0.42" r="0.6">
+      <stop offset="0" stop-color="#11271c"/>
+      <stop offset="1" stop-color="#070a09"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3ad07f"/>
+      <stop offset="1" stop-color="#2a9d63"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1000" height="1000" fill="#070a09"/>
+  <circle cx="500" cy="500" r="500" fill="url(#glow)"/>
+  <circle cx="500" cy="500" r="436" fill="none" stroke="url(#ring)" stroke-width="12" opacity="0.9"/>
+
+  <!-- crossed swords -->
+  <g>
+    <g transform="translate(500,500) rotate(45)">
+      <rect x="-8" y="-160" width="16" height="300" rx="8" fill="#e9f1ec"/>
+      <polygon points="-8,-160 8,-160 0,-188" fill="#cfe0ff"/>
+      <rect x="-34" y="140" width="68" height="18" rx="9" fill="#ffbd2e"/>
+      <rect x="-8" y="158" width="16" height="56" rx="8" fill="#5d726a"/>
+    </g>
+    <g transform="translate(500,500) rotate(-45)">
+      <rect x="-8" y="-160" width="16" height="300" rx="8" fill="#e9f1ec"/>
+      <polygon points="-8,-160 8,-160 0,-188" fill="#cfe0ff"/>
+      <rect x="-34" y="140" width="68" height="18" rx="9" fill="#ffbd2e"/>
+      <rect x="-8" y="158" width="16" height="56" rx="8" fill="#5d726a"/>
+    </g>
+    <circle cx="500" cy="500" r="20" fill="#3ad07f"/>
+  </g>
+
+  <!-- terminal prompt mark -->
+  <text x="500" y="812" text-anchor="middle" font-family="Menlo, ui-monospace, monospace" font-size="58" font-weight="700" fill="#3ad07f">arena ❯</text>
+</svg>

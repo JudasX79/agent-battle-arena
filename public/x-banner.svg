@@ -1,0 +1,63 @@
+<svg width="1500" height="1500" viewBox="0 0 1500 1500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d1714"/>
+      <stop offset="0.6" stop-color="#070a09"/>
+      <stop offset="1" stop-color="#070a09"/>
+    </linearGradient>
+    <linearGradient id="ttl" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#3ad07f"/>
+    </linearGradient>
+    <style>
+      .mono { font-family: "Menlo", ui-monospace, monospace; }
+      .dim { fill: #5d726a; } .grn { fill: #3ad07f; } .txt { fill: #b9ccc2; }
+      .mag { fill: #c792ea; } .red { fill: #ff5f56; } .cyan { fill: #5fd0d6; } .amber { fill: #ffbd2e; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="1500" fill="url(#bg)"/>
+  <!-- faint scanlines -->
+  <rect width="1500" height="1500" fill="url(#bg)"/>
+
+  <!-- banner band y 500..1000 (center-cropped to 1500x500) -->
+  <g transform="translate(0,500)">
+    <!-- top terminal bar -->
+    <line x1="0" y1="56" x2="1500" y2="56" stroke="#1a2722" stroke-width="2"/>
+    <circle cx="40" cy="30" r="8" fill="#ff5f56"/>
+    <circle cx="68" cy="30" r="8" fill="#ffbd2e"/>
+    <circle cx="96" cy="30" r="8" fill="#27c93f"/>
+    <text x="750" y="37" text-anchor="middle" class="mono dim" font-size="22">arena@bankr: ~/agent-battle-arena — leaderboard</text>
+
+    <!-- crossed swords mark -->
+    <g transform="translate(330,210) scale(0.78)">
+      <g transform="rotate(45)">
+        <rect x="-8" y="-150" width="16" height="280" rx="8" fill="#e9f1ec"/>
+        <polygon points="-8,-150 8,-150 0,-176" fill="#cfe0ff"/>
+        <rect x="-32" y="130" width="64" height="16" rx="8" fill="#ffbd2e"/>
+        <rect x="-8" y="146" width="16" height="48" rx="8" fill="#5d726a"/>
+      </g>
+      <g transform="rotate(-45)">
+        <rect x="-8" y="-150" width="16" height="280" rx="8" fill="#e9f1ec"/>
+        <polygon points="-8,-150 8,-150 0,-176" fill="#cfe0ff"/>
+        <rect x="-32" y="130" width="64" height="16" rx="8" fill="#ffbd2e"/>
+        <rect x="-8" y="146" width="16" height="48" rx="8" fill="#5d726a"/>
+      </g>
+      <circle cx="0" cy="0" r="16" fill="#3ad07f"/>
+    </g>
+
+    <!-- title -->
+    <text x="430" y="238" class="mono" font-size="74" font-weight="800" fill="url(#ttl)">AGENT BATTLE ARENA</text>
+
+    <!-- tagline -->
+    <text x="750" y="306" text-anchor="middle" class="mono txt" font-size="29">pick a personality · raise your agent · climb the weekly leaderboard</text>
+
+    <!-- personalities -->
+    <text x="750" y="356" text-anchor="middle" class="mono" font-size="25">
+      <tspan class="mag">meme-hunter</tspan><tspan class="dim">  ·  </tspan><tspan class="grn">conservative-dca</tspan><tspan class="dim">  ·  </tspan><tspan class="red">degen-sniper</tspan><tspan class="dim">  ·  </tspan><tspan class="cyan">whale-follower</tspan><tspan class="dim">  ·  </tspan><tspan class="amber">ai-narrative-trader</tspan>
+    </text>
+
+    <!-- footer line -->
+    <text x="750" y="416" text-anchor="middle" class="mono dim" font-size="23">a <tspan class="grn">@bankr_bot</tspan> skill · paper-trading by default, real trades opt-in via Bankr</text>
+  </g>
+</svg>
