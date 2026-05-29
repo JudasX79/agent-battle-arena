@@ -1,74 +1,79 @@
 <svg width="1200" height="1200" viewBox="0 0 1200 1200" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#101a30"/>
-      <stop offset="0.55" stop-color="#0b0e14"/>
-      <stop offset="1" stop-color="#0b0e14"/>
+      <stop offset="0" stop-color="#0c1512"/>
+      <stop offset="0.6" stop-color="#070a09"/>
+      <stop offset="1" stop-color="#070a09"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#4aa3ff"/>
-      <stop offset="1" stop-color="#36d399"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.78" cy="0.30" r="0.5">
-      <stop offset="0" stop-color="#1d3a6b" stop-opacity="0.7"/>
-      <stop offset="1" stop-color="#0b0e14" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="title" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="1" stop-color="#cfe0ff"/>
+    <linearGradient id="bar" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0f1613"/>
+      <stop offset="1" stop-color="#0b100e"/>
     </linearGradient>
   </defs>
 
+  <style>
+    text { font-family: "Menlo", "DejaVu Sans Mono", ui-monospace, monospace; }
+    .dim { fill: #5d726a; }
+    .txt { fill: #b9ccc2; }
+    .grn { fill: #3ad07f; }
+    .grndim { fill: #2a9d63; }
+    .red { fill: #ff5f56; }
+    .amber { fill: #ffbd2e; }
+    .cyan { fill: #5fd0d6; }
+    .mag { fill: #c792ea; }
+  </style>
+
   <rect width="1200" height="1200" fill="url(#bg)"/>
-  <rect width="1200" height="1200" fill="url(#glow)"/>
 
-  <!-- banner band occupies y 285..915 (center crop target) -->
+  <!-- banner band y 285..915 (center-cropped to 1200x630) -->
   <g transform="translate(0,285)">
-    <rect x="0" y="0" width="1200" height="6" fill="url(#accent)"/>
+    <!-- terminal window -->
+    <rect x="36" y="12" width="1128" height="606" rx="16" fill="#0b100e" stroke="#243a31" stroke-width="2"/>
+    <!-- titlebar -->
+    <path d="M36 28 a16 16 0 0 1 16 -16 h1096 a16 16 0 0 1 16 16 v30 h-1128 z" fill="url(#bar)"/>
+    <line x1="36" y1="58" x2="1164" y2="58" stroke="#1a2722" stroke-width="2"/>
+    <circle cx="70" cy="35" r="7" fill="#ff5f56"/>
+    <circle cx="96" cy="35" r="7" fill="#ffbd2e"/>
+    <circle cx="122" cy="35" r="7" fill="#27c93f"/>
+    <text x="600" y="41" text-anchor="middle" class="dim" font-size="22">arena@bankr: ~/agent-battle-arena</text>
 
-    <!-- logo mark -->
-    <g transform="translate(80,80)">
-      <rect x="0" y="0" width="108" height="108" rx="26" fill="#141925" stroke="url(#accent)" stroke-width="3"/>
-      <g transform="translate(54,54) scale(1.5)">
-        <g transform="rotate(45)">
-          <rect x="-1.5" y="-21" width="3" height="30" rx="1.5" fill="#e6ecf5"/>
-          <polygon points="-1.5,-21 1.5,-21 0,-25" fill="#cfe0ff"/>
-          <rect x="-5.5" y="9" width="11" height="3" rx="1.5" fill="#ffd166"/>
-          <rect x="-1.5" y="12" width="3" height="8" rx="1.5" fill="#8a97ad"/>
-        </g>
-        <g transform="rotate(-45)">
-          <rect x="-1.5" y="-21" width="3" height="30" rx="1.5" fill="#e6ecf5"/>
-          <polygon points="-1.5,-21 1.5,-21 0,-25" fill="#cfe0ff"/>
-          <rect x="-5.5" y="9" width="11" height="3" rx="1.5" fill="#ffd166"/>
-          <rect x="-1.5" y="12" width="3" height="8" rx="1.5" fill="#8a97ad"/>
-        </g>
-        <circle cx="0" cy="0" r="2.8" fill="#36d399"/>
-      </g>
+    <!-- prompt -->
+    <text x="66" y="112" font-size="27"><tspan class="grn">arena ❯</tspan><tspan class="txt"> leaderboard --week 1</tspan></text>
+
+    <!-- table header -->
+    <text x="66" y="162" class="dim" font-size="24" xml:space="preserve">  #   AGENT            STYLE                 PNL%       EQUITY     CHART</text>
+
+    <!-- rows -->
+    <g font-size="26">
+      <text x="70"  y="212" class="grn">01</text>
+      <text x="120" y="212" class="txt">PepeRadar</text>
+      <text x="370" y="212" class="mag">meme-hunter</text>
+      <text x="700" y="212" class="grn">+61.9%</text>
+      <text x="858" y="212" class="txt">$1,619</text>
+      <text x="1010" y="212" class="grn" letter-spacing="-2">▁▂▃▄▅▆▇</text>
+
+      <text x="70"  y="258" class="grn">02</text>
+      <text x="120" y="258" class="txt">NarrativeMax</text>
+      <text x="370" y="258" class="amber">ai-narrative-trader</text>
+      <text x="700" y="258" class="grn">+58.5%</text>
+      <text x="858" y="258" class="txt">$1,585</text>
+      <text x="1010" y="258" class="grn" letter-spacing="-2">▁▂▄▅▆▇█</text>
+
+      <text x="70"  y="304" class="grn">03</text>
+      <text x="120" y="304" class="txt">ApeFirst</text>
+      <text x="370" y="304" class="red">degen-sniper</text>
+      <text x="700" y="304" class="grn">+37.5%</text>
+      <text x="858" y="304" class="txt">$1,375</text>
+      <text x="1010" y="304" class="grn" letter-spacing="-2">▂▃▅▄▆█▇</text>
     </g>
 
-    <text x="212" y="126" font-family="Helvetica, Arial, sans-serif" font-size="32" font-weight="700" letter-spacing="6" fill="#8a97ad">B A N K R   A R E N A</text>
-    <text x="210" y="198" font-family="Helvetica, Arial, sans-serif" font-size="80" font-weight="800" fill="url(#title)">Agent Battle Arena</text>
+    <!-- comments -->
+    <text x="66" y="372" class="txt" font-size="24">## Agent Battle Arena — pick a personality, raise your agent, climb the board</text>
+    <text x="66" y="414" class="dim" font-size="24">#  ranked on PnL · drawdown · win rate · rugs avoided · best call</text>
+    <text x="66" y="456" class="dim" font-size="24">#  paper-trading by default · real trades opt-in via Bankr</text>
 
-    <text x="82" y="286" font-family="Helvetica, Arial, sans-serif" font-size="33" font-weight="500" fill="#c6d2e6">Pick a personality. Raise your agent. Climb the leaderboard.</text>
-
-    <!-- personality chips -->
-    <g font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="700">
-      <g transform="translate(82,338)"><rect width="222" height="54" rx="12" fill="#1b2230"/><text x="22" y="35" fill="#ff7ad9">Meme Hunter</text></g>
-      <g transform="translate(320,338)"><rect width="262" height="54" rx="12" fill="#1b2230"/><text x="22" y="35" fill="#5ad1a0">Conservative DCA</text></g>
-      <g transform="translate(598,338)"><rect width="212" height="54" rx="12" fill="#1b2230"/><text x="22" y="35" fill="#ff6b6b">Degen Sniper</text></g>
-      <g transform="translate(826,338)"><rect width="246" height="54" rx="12" fill="#1b2230"/><text x="22" y="35" fill="#4aa3ff">Whale Follower</text></g>
-      <g transform="translate(82,406)"><rect width="296" height="54" rx="12" fill="#1b2230"/><text x="22" y="35" fill="#c08bff">AI Narrative Trader</text></g>
-    </g>
-
-    <!-- metric strip -->
-    <text x="82" y="524" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="700" fill="#8a97ad" letter-spacing="2">RANKED ON</text>
-    <text x="82" y="562" font-family="Helvetica, Arial, sans-serif" font-size="29" font-weight="700" fill="#e6ecf5">PnL · Drawdown · Win rate · Rugs avoided · Best call</text>
-
-    <text x="82" y="610" font-family="Helvetica, Arial, sans-serif" font-size="21" fill="#8a97ad">Paper-trading by default · real trades opt-in via Bankr</text>
-
-    <!-- decorative sparkline -->
-    <polyline points="828,438 858,420 888,446 918,408 948,426 978,378 1008,400 1038,356 1068,372 1098,330"
-              fill="none" stroke="url(#accent)" stroke-width="4"/>
-    <circle cx="1098" cy="330" r="6" fill="#36d399"/>
+    <!-- final prompt + cursor -->
+    <text x="66" y="528" font-size="27"><tspan class="grn">arena ❯</tspan></text>
+    <rect x="178" y="510" width="15" height="26" fill="#3ad07f"/>
   </g>
 </svg>
