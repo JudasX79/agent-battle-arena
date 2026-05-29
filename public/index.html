@@ -71,6 +71,35 @@
   .lk svg { width: 15px; height: 15px; flex: none; }
   @media (max-width: 960px) { .lk .lbl { display: none; } .lk { padding: 6px; } }
   @media (max-width: 600px) { .topbar .social { display: none; } }
+
+  /* docs button */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px; border-radius: 9px; border: 1px solid var(--line2); color: var(--text); background: #18202f; font-size: 12px; font-weight: 700; cursor: pointer; transition: border-color .14s, background .14s; }
+  .btn:hover { border-color: #3a4a6b; background: #1f293c; }
+
+  /* contract address bar */
+  .ca-bar { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 11px 15px; margin: 16px 0 4px; }
+  .ca-k { font-size: 10.5px; font-weight: 800; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; padding: 2px 8px; border: 1px solid var(--line2); border-radius: 6px; }
+  .ca-addr { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--text); word-break: break-all; }
+  .ca-copy { padding: 4px 10px; border-radius: 7px; border: 1px solid var(--line2); background: transparent; color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; }
+  .ca-copy:hover { color: var(--text); border-color: #3a4a6b; }
+  .ca-link { font-size: 12px; color: #8fc6ff; text-decoration: none; font-weight: 600; }
+  .ca-tba { color: var(--muted); font-size: 13px; }
+  .ca-tba b { color: #c08bff; }
+
+  /* docs modal */
+  .overlay { position: fixed; inset: 0; z-index: 50; background: #06080dcc; backdrop-filter: blur(4px); display: none; align-items: flex-start; justify-content: center; padding: 40px 16px; overflow-y: auto; }
+  .overlay.show { display: flex; }
+  .modal { width: 100%; max-width: 820px; background: var(--panel-solid); border: 1px solid var(--line2); border-radius: 16px; padding: 26px 30px 32px; position: relative; box-shadow: 0 30px 80px #000a; }
+  .modal h2 { margin: 0 0 2px; font-size: 22px; }
+  .modal h3 { margin: 22px 0 8px; font-size: 14px; color: #cfe0ff; }
+  .modal p { color: var(--muted); margin: 4px 0; }
+  .modal .x { position: absolute; top: 16px; right: 18px; background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; line-height: 1; }
+  .modal .x:hover { color: var(--text); }
+  .modal pre { background: #0b0f1a; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto; font-size: 12.5px; }
+  .modal table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .modal td { padding: 7px 8px; border-bottom: 1px solid var(--line); font-size: 13px; vertical-align: top; }
+  .modal td.cmd { white-space: nowrap; color: #8fc6ff; font-family: ui-monospace, Menlo, monospace; font-size: 12px; }
+  .modal a { color: #8fc6ff; }
   .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }
   .dot.live { background: var(--green); box-shadow: 0 0 0 0 #36d39988; animation: pulse 1.8s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 #36d39966; } 70% { box-shadow: 0 0 0 7px #36d39900; } 100% { box-shadow: 0 0 0 0 #36d39900; } }
@@ -159,6 +188,7 @@
     </div>
     <div class="spacer"></div>
     <div class="social" id="social"></div>
+    <button class="btn" id="docsBtn" type="button">📖 Docs</button>
     <div class="controls">
       <span id="status"><span class="dot"></span> connecting…</span>
       <label><input type="checkbox" id="auto" checked /> auto-refresh</label>
@@ -174,6 +204,7 @@
       <div id="seasonPill"></div>
     </div>
 
+    <div id="caBar" class="ca-bar"></div>
     <div id="tiles" class="tiles"></div>
     <div id="content"></div>
 
@@ -183,6 +214,53 @@
       Advance the season with <code>node src/cli.ts run --all</code>, then refresh.
       <div class="social" id="socialFooter" style="margin-top:12px"></div>
     </footer>
+  </div>
+
+  <div class="overlay" id="docs">
+    <div class="modal">
+      <button class="x" id="docsClose" type="button" aria-label="Close">×</button>
+      <h2>📖 Agent Battle Arena — Docs</h2>
+      <p>A Bankr skill + zero-dependency TypeScript engine. Runs on Node ≥ 22.6 (no build step).</p>
+
+      <h3>Quick start</h3>
+      <pre>node src/cli.ts seed-demo     # arena with all 5 personalities
+node src/cli.ts run --all     # play out the week (paper trades)
+node src/cli.ts leaderboard   # ranked board + highlights
+node src/cli.ts serve         # this web dashboard at :4173</pre>
+
+      <h3>CLI commands</h3>
+      <table>
+        <tr><td class="cmd">seed-demo [--seed N] [--weeks W]</td><td>Create an arena pre-loaded with all 5 demo agents.</td></tr>
+        <tr><td class="cmd">new [--seed N] [--weeks W|--ticks T]</td><td>Create an empty arena (default 1 week = 168 ticks).</td></tr>
+        <tr><td class="cmd">add-agent --name &lt;n&gt; --personality &lt;p&gt;</td><td>Add an agent. Options: <code>--owner</code>, <code>--mode sim|real</code>, <code>--cash N</code>.</td></tr>
+        <tr><td class="cmd">list</td><td>List agents in the arena.</td></tr>
+        <tr><td class="cmd">run [--rounds N | --all]</td><td>Advance the season (default 24 ticks).</td></tr>
+        <tr><td class="cmd">leaderboard</td><td>Show the ranked board + weekly highlights.</td></tr>
+        <tr><td class="cmd">agent &lt;id|name&gt;</td><td>Inspect one agent: positions, trades, best/worst.</td></tr>
+        <tr><td class="cmd">serve [--port N]</td><td>Launch this web dashboard (default :4173).</td></tr>
+        <tr><td class="cmd">personalities</td><td>List the 5 personalities.</td></tr>
+        <tr><td class="cmd">reset</td><td>Delete the current arena state.</td></tr>
+      </table>
+
+      <h3>Personalities</h3>
+      <p><b style="color:#ff7ad9">meme-hunter</b> · <b style="color:#5ad1a0">conservative-dca</b> · <b style="color:#ff6b6b">degen-sniper</b> · <b style="color:#4aa3ff">whale-follower</b> · <b style="color:#c08bff">ai-narrative-trader</b></p>
+      <p>Each reads market signals (momentum, liquidity, whale flow, narrative score, rug risk) and returns buy/sell orders plus skips. Skips that later rug become "rugs avoided".</p>
+
+      <h3>Real trading (opt-in)</h3>
+      <p>Paper-trading by default. To trade real funds via Bankr, the engine requires explicit env flags:</p>
+      <pre>export ARENA_LIVE=1
+export BANKR_API_KEY=bk_your_write_enabled_key
+export ARENA_MAX_TRADE_USD=25      # per-trade cap
+node src/cli.ts add-agent --name LiveBot --personality whale-follower --mode real</pre>
+      <p>Without <code>ARENA_LIVE=1</code> and a key, real mode refuses to run. Use a dedicated agent wallet; start tiny.</p>
+
+      <h3>Links</h3>
+      <p>
+        <a href="https://github.com/JudasX79/agent-battle-arena" target="_blank" rel="noopener">GitHub repo</a> ·
+        <a href="https://github.com/BankrBot/skills/tree/main/bankr" target="_blank" rel="noopener">Bankr skill</a> ·
+        <a href="https://docs.bankr.bot" target="_blank" rel="noopener">Bankr docs</a>
+      </p>
+    </div>
   </div>
 
 <script>
@@ -233,6 +311,32 @@ function renderLinks() {
   if (a) a.innerHTML = html;
   if (b) b.innerHTML = html;
 }
+
+function renderCA() {
+  const el = document.getElementById('caBar');
+  if (!el) return;
+  const t = PROJECT.token;
+  if (!t) {
+    el.innerHTML = `<span class="ca-k">Contract</span><span class="ca-tba">Token <b>launching on Bankr</b> soon — CA will appear here</span>`;
+    return;
+  }
+  el.innerHTML =
+    `<span class="ca-k">CA</span>` +
+    `<code class="ca-addr" title="${t}">${t}</code>` +
+    `<button class="ca-copy" type="button">Copy</button>` +
+    `<a class="ca-link" href="https://basescan.org/token/${t}" target="_blank" rel="noopener">Basescan ↗</a>` +
+    `<a class="ca-link" href="https://dexscreener.com/${PROJECT.chain}/${t}" target="_blank" rel="noopener">DexScreener ↗</a>`;
+  el.querySelector('.ca-copy').addEventListener('click', async (e) => {
+    try { await navigator.clipboard.writeText(t); e.target.textContent = 'Copied ✓'; setTimeout(() => (e.target.textContent = 'Copy'), 1200); } catch (_) {}
+  });
+}
+
+// docs modal
+const docsEl = document.getElementById('docs');
+document.getElementById('docsBtn').addEventListener('click', () => docsEl.classList.add('show'));
+document.getElementById('docsClose').addEventListener('click', () => docsEl.classList.remove('show'));
+docsEl.addEventListener('click', (e) => { if (e.target === docsEl) docsEl.classList.remove('show'); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') docsEl.classList.remove('show'); });
 const fmtUsd = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmtUsd0 = (n) => (n < 0 ? '-$' : '$') + Math.abs(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 const fmtPct = (n) => (n >= 0 ? '+' : '') + (n * 100).toFixed(1) + '%';
@@ -416,6 +520,7 @@ async function refresh() {
 }
 
 renderLinks();
+renderCA();
 setInterval(() => { if (document.getElementById('auto').checked) refresh(); }, 4000);
 document.getElementById('auto').addEventListener('change', (e) => { if (e.target.checked) refresh(); });
 refresh();
