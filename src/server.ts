@@ -2,10 +2,10 @@ import { createServer } from 'node:http';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
-import { hasState, loadState, seasonFor } from './store/store.ts';
+import { hasState, loadState } from './store/store.ts';
 import { computeScore } from './metrics/leaderboard.ts';
 import { STRATEGIES } from './personalities/index.ts';
-import type { AgentState } from './types.ts';
+import type { AgentState, ArenaState } from './types.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(__dirname, '..', 'public');
@@ -44,11 +44,9 @@ function sample(curve: AgentState['equityCurve'], max = 80): number[] {
   return out;
 }
 
-function buildPayload() {
-  if (!hasState()) {
-    return { ok: false, message: 'No arena yet. Run: node src/cli.ts seed-demo' };
-  }
-  const state = loadState();
+// Build the API payload from an arena state (shared by the live server and the
+// static snapshot generator used for Vercel deploys).
+export function payloadFromState(state: ArenaState) {
   const board = Object.values(state.agents)
     .map((a) => {
       const score = computeScore(state, a);
@@ -87,6 +85,13 @@ function buildPayload() {
     },
     board,
   };
+}
+
+function buildPayload() {
+  if (!hasState()) {
+    return { ok: false, message: 'No arena yet. Run: node src/cli.ts seed-demo' };
+  }
+  return payloadFromState(loadState());
 }
 
 export function startServer(port: number): void {
